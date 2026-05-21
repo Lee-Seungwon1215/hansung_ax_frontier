@@ -74,7 +74,7 @@ function fileToBase64(file) {
 function App() {
   const fileInputRef = useRef(null);
   const [workInput, setWorkInput] = useState("");
-  const [meetingFocus, setMeetingFocus] = useState("성과 및 추진현황");
+  const [meetingFocus, setMeetingFocus] = useState("요약 보고서");
   const [draft, setDraft] = useState("");
   const [loading, setLoading] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
@@ -206,13 +206,8 @@ function App() {
     );
   };
 
-  const selectAllEmails = () => {
-    setSelectedEmailIds(emails.map((email) => email.id));
-  };
-
-  const clearEmailSelection = () => {
-    setSelectedEmailIds([]);
-  };
+  const selectAllEmails = () => setSelectedEmailIds(emails.map((email) => email.id));
+  const clearEmailSelection = () => setSelectedEmailIds([]);
 
   const readFiles = useCallback(async (files) => {
     const nextFiles = await Promise.all(
@@ -276,7 +271,7 @@ function App() {
 
   const generateReport = async () => {
     if (!workInput.trim() && !selectedEmails.length && !uploadedFiles.length) {
-      alert("보고서에 반영할 업무 내용, 선택한 Gmail, 첨부파일 중 하나 이상이 필요합니다.");
+      alert("보고서에 반영할 요청, 선택한 Gmail, 첨부파일 중 하나 이상이 필요합니다.");
       return;
     }
 
@@ -288,7 +283,7 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           work_content: workInput,
-          target_committee: "사업단운영위원회",
+          target_committee: "자료 기반 보고서",
           meeting_focus: meetingFocus,
           email_sources: emailSources,
           uploaded_files: uploadedFiles.map(({ name, type, text, data }) => ({ name, type, text, data })),
@@ -299,7 +294,7 @@ function App() {
       setDocCount((prev) => prev + 1);
       const today = new Date().toLocaleDateString("ko-KR");
       setRecentDocs((prev) =>
-        [{ title: `사업단운영위원회 주간업무보고 (${today})`, status: "초안 생성" }, ...prev].slice(0, 5)
+        [{ title: `AI 보고서 초안 (${today})`, status: "초안 생성" }, ...prev].slice(0, 5)
       );
     } catch {
       setDraft("서버 연결에 실패했습니다. FastAPI 백엔드가 실행 중인지 확인해 주세요.");
@@ -328,7 +323,7 @@ function App() {
       <section className="topbar">
         <div>
           <p className="eyebrow">Hansung AI Report</p>
-          <h1>사업단운영위원회 주간업무보고</h1>
+          <h1>자료 기반 AI 보고서 변환</h1>
         </div>
         {user ? (
           <div className="user-box">
@@ -365,33 +360,34 @@ function App() {
               <p className="eyebrow">Report Builder</p>
               <h2>보고서 생성 정보</h2>
             </div>
-            <select value={meetingFocus} onChange={(e) => setMeetingFocus(e.target.value)}>
-              <option>성과 및 추진현황</option>
-              <option>예산 및 집행현황</option>
-              <option>위원회 안건 중심</option>
-              <option>리스크 및 후속조치</option>
+            <select value={meetingFocus} onChange={(event) => setMeetingFocus(event.target.value)}>
+              <option>요약 보고서</option>
+              <option>업무 정리 보고서</option>
+              <option>회의 보고서</option>
+              <option>PPT 발표용 보고서</option>
+              <option>검토 의견 보고서</option>
             </select>
           </div>
 
-          <label className="field-label" htmlFor="work-input">이번 주 업무 내용</label>
+          <label className="field-label" htmlFor="work-input">요청 내용</label>
           <textarea
             id="work-input"
             value={workInput}
-            onChange={(e) => setWorkInput(e.target.value)}
-            placeholder={"예시:\n- 사업단 운영위원회 안건 정리\n- 프로그램 운영 실적 취합\n- 예산 집행 현황 검토\n- 차주 의결 필요 사항 정리"}
+            onChange={(event) => setWorkInput(event.target.value)}
+            placeholder={"예시:\n제안서 정리\n회의록 정리\n심의의결서 정리\n결재서 정리\n보고서 정리\n선택한 메일과 첨부파일을 참고해서 보고서 형식으로 요약해줘."}
           />
 
           <div
             className={`dropzone ${dragActive ? "is-active" : ""}`}
-            onDragOver={(e) => {
-              e.preventDefault();
+            onDragOver={(event) => {
+              event.preventDefault();
               setDragActive(true);
             }}
             onDragLeave={() => setDragActive(false)}
-            onDrop={(e) => {
-              e.preventDefault();
+            onDrop={(event) => {
+              event.preventDefault();
               setDragActive(false);
-              readFiles(e.dataTransfer.files);
+              readFiles(event.dataTransfer.files);
             }}
             onClick={() => fileInputRef.current?.click()}
           >
@@ -399,7 +395,7 @@ function App() {
               ref={fileInputRef}
               type="file"
               multiple
-              onChange={(e) => readFiles(e.target.files)}
+              onChange={(event) => readFiles(event.target.files)}
             />
             <strong>파일을 드래그하거나 클릭해서 첨부</strong>
             <span>PDF, Word, Excel, PPT, txt, csv, md, json 내용을 보고서 근거로 활용합니다.</span>
@@ -422,7 +418,7 @@ function App() {
           )}
 
           <button type="button" className="generate-button" onClick={generateReport} disabled={loading}>
-            {loading ? "AI가 보고서 초안을 작성 중입니다..." : "운영위원회 보고서 생성"}
+            {loading ? "AI가 보고서 초안을 작성 중입니다..." : "보고서 초안 생성"}
           </button>
         </div>
 
@@ -453,11 +449,7 @@ function App() {
             return (
               <article className={`mail-item ${checked ? "is-selected" : ""}`} key={email.id}>
                 <label className="mail-check">
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={() => toggleEmail(email.id)}
-                  />
+                  <input type="checkbox" checked={checked} onChange={() => toggleEmail(email.id)} />
                   <span>
                     <strong>{email.subject}</strong>
                     <small>{email.from}</small>
@@ -492,18 +484,18 @@ function App() {
           <div className="section-title">
             <div>
               <p className="eyebrow">Draft</p>
-              <h2>AI 생성 초안</h2>
+              <h2>AI 생성 보고서 초안</h2>
             </div>
             <div className="download-actions">
-              <button type="button" onClick={() => downloadFile("save-word", "사업단운영위원회_주간업무보고.docx")}>
-                Word 저장
+              <button type="button" onClick={() => downloadFile("save-word", "AI_보고서_초안.docx")}>
+                Word 보고서 저장
               </button>
-              <button type="button" onClick={() => downloadFile("save-ppt", "사업단운영위원회_주간업무보고.pptx")}>
-                PPT 저장
+              <button type="button" onClick={() => downloadFile("save-ppt", "AI_보고서_초안.pptx")}>
+                PPT 보고서 저장
               </button>
             </div>
           </div>
-          <textarea value={draft} onChange={(e) => setDraft(e.target.value)} />
+          <textarea value={draft} onChange={(event) => setDraft(event.target.value)} />
         </section>
       )}
     </main>

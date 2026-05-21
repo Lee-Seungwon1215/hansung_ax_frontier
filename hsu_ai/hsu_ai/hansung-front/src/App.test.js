@@ -9,6 +9,6 @@ test("renders committee report builder", () => {
     </GoogleOAuthProvider>
   );
 
-  expect(screen.getByText("사업단운영위원회 주간업무보고")).toBeInTheDocument();
-  expect(screen.getByText("운영위원회 보고서 생성")).toBeInTheDocument();
+  expect(screen.getByText("자료 기반 AI 보고서 변환")).toBeInTheDocument();
+  expect(screen.getByText("보고서 초안 생성")).toBeInTheDocument();
 });
