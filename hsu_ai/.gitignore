@@ -1,10 +1,8 @@
-**/node_modules/
-**/build/
 **/__pycache__/
-**/*.pyc
-**/.env
-**/.env.*
-**/output_*.docx
-**/output_*.pptx
-.claude/
-.sixth/
+*.py[cod]
+.env
+hansung_demo.db
+output_*.docx
+output_*.pptx
+build/
+node_modules/
