@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import "./App.css";
 
-const API_BASE = "http://localhost:8001";
+const API_BASE = process.env.REACT_APP_API_BASE || "http://127.0.0.1:8001";
 const MAX_EMAILS = 10;
 const MAX_TEXT_LENGTH = 12000;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
@@ -114,9 +114,13 @@ function App() {
     setIntranetLoading(true);
     try {
       let lastError = null;
-      for (let attempt = 0; attempt < 6; attempt += 1) {
+      for (let attempt = 0; attempt < 45; attempt += 1) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2500);
         try {
-          const res = await fetch(`${API_BASE}/intranet/dashboard`);
+          const res = await fetch(`${API_BASE}/intranet/dashboard`, {
+            signal: controller.signal,
+          });
           if (!res.ok) {
             throw new Error(`Dashboard request failed: ${res.status}`);
           }
@@ -124,6 +128,10 @@ function App() {
           return;
         } catch (error) {
           lastError = error;
+        } finally {
+          clearTimeout(timeoutId);
+        }
+        if (attempt < 44) {
           await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }

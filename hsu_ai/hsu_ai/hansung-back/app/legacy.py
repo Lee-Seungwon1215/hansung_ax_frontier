@@ -45,7 +45,10 @@ app = FastAPI(title="Hansung AI Report API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -736,7 +739,7 @@ WEEKLY_REPORT_TEMPLATE = {
 INTRANET_DOCUMENTS = [
     {
         "id": "D-001",
-        "title": "안건서 - AI코딩 집중캠프 운영 계획(안)",
+        "title": "안건서 양식",
         "type": "docx",
         "owner": "사업운영팀",
         "updatedAt": "2026-05-12",
