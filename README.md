@@ -54,10 +54,10 @@ cd hsu_ai/hansung-back
 pip install -r requirements.txt
 ```
 
-`hansung-back/.env` 파일을 만들고 Gemini API Key를 입력합니다.
+`hansung-back/.env` 파일을 만들고 위에 제공한 Gemini API Key를 입력합니다.
 
 ```env
-GEMINI_API_KEY=본인_Gemini_API_Key
+GEMINI_API_KEY=AIzaSyBUq_RUTYrQkfwtz4cu1U4AJaVCR2UTT8A
 ```
 
 백엔드를 실행합니다.
@@ -121,4 +121,4 @@ GET  /rules/search
 
 - `.env`, `hansung_demo.db`, `output_*`, `node_modules`, `build`, `__pycache__`는 Git에 올리지 않습니다.
 - 백엔드 포트는 프론트 코드에서 `http://localhost:8001`로 연결되어 있습니다.
-- 서버를 재시작한 뒤 화면이 비어 보이면 프론트 브라우저를 새로고침합니다.
+- 서버를 재시작한 뒤 화면이 비어 보이면 프론트 브라우저를 새로고침 또는 링크를 복사해서 크롬으로 접속합니다.
